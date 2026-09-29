@@ -8,7 +8,7 @@ export default function SideBySideZoom({
   beforeImage,
   afterImage,
   beforeLabel = "Input (10m L2A Sentinel-2)",
-  afterLabel = "Super-Resolved (2.5m SEN2SR)",
+  afterLabel = "Super-Resolved (2.5m Custom SR)",
 }) {
   const [pos, setPos] = useState(null); // { rx, ry } relative 0-1 within each image
   const beforeRef = useRef(null);

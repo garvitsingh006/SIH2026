@@ -4,10 +4,11 @@ import {
   UploadCloud, Satellite, Layers, Download, Activity, 
   Sparkles, CheckCircle2, AlertCircle, FileCheck, ArrowRight,
   SlidersHorizontal, Eye, Compass, Terminal, Cpu, 
-  ShieldCheck, RefreshCw, FileCode, Check
+  ShieldCheck, RefreshCw, FileCode, Check, Copy, Code
 } from 'lucide-react';
 import SideBySideZoom from './components/SideBySideZoom';
 import CompareSlider from './components/CompareSlider';
+import ModelArchitectureWorkflow from './components/ModelArchitectureWorkflow';
 
 const BACKEND_URL = "http://localhost:8000";
 
@@ -19,6 +20,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("lens"); // 'lens' | 'slider'
   const [activePreset, setActivePreset] = useState(null);
+  const [activeView, setActiveView] = useState("studio"); // 'studio' | 'architecture'
 
   const handleUpload = async (fileToUpload) => {
     const targetFile = fileToUpload || file;
@@ -171,23 +173,57 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-6 ml-8 text-sm text-[#a8a8a8]">
-            <a href="#workbench" className="hover:text-white transition-colors">Operational Studio</a>
-            <a href="#terminal" className="hover:text-white transition-colors">Architecture</a>
-            <a href="#spectral-bands" className="hover:text-white transition-colors">10-Band Spectral</a>
-            <a href="#gis-export" className="hover:text-white transition-colors">GeoTIFF Pipeline</a>
+          <div className="hidden lg:flex items-center gap-1.5 ml-8 bg-[#181818] p-1 rounded-lg border border-[#222222]">
+            <button
+              onClick={() => { setActiveView("studio"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                activeView === "studio"
+                  ? "bg-[#0007cd] text-white shadow-sm"
+                  : "text-[#a8a8a8] hover:text-white hover:bg-[#222222]"
+              }`}
+            >
+              Operational Studio
+            </button>
+            <button
+              onClick={() => { setActiveView("architecture"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeView === "architecture"
+                  ? "bg-[#0007cd] text-white shadow-sm"
+                  : "text-[#a8a8a8] hover:text-white hover:bg-[#222222]"
+              }`}
+            >
+              <Cpu size={13} className="text-[#00d4ff]" />
+              Model Architecture & Workflow
+            </button>
+            <button
+              onClick={() => { setActiveView("studio"); setTimeout(() => document.getElementById('spectral-bands')?.scrollIntoView({ behavior: 'smooth' }), 50); }}
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#a8a8a8] hover:text-white hover:bg-[#222222] transition-all cursor-pointer"
+            >
+              10-Band Spectral
+            </button>
+            <button
+              onClick={() => { setActiveView("studio"); setTimeout(() => document.getElementById('gis-export')?.scrollIntoView({ behavior: 'smooth' }), 50); }}
+              className="px-3 py-1.5 rounded-md text-xs font-medium text-[#a8a8a8] hover:text-white hover:bg-[#222222] transition-all cursor-pointer"
+            >
+              GeoTIFF Pipeline
+            </button>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#181818] border border-[#222222] rounded-full text-xs">
+          <button
+            onClick={() => { setActiveView("architecture"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#181818] hover:bg-[#222222] border border-[#333333] hover:border-[#0007cd] rounded-full text-xs transition-all cursor-pointer group"
+            title="Inspect Custom Model Architecture & Workflow"
+          >
             <span className="w-2 h-2 rounded-full bg-[#33d17a] animate-pulse"></span>
-            <span className="text-[#a8a8a8]">Engine: <span className="text-white font-medium">SEN2SR 2.5m Lite</span></span>
-          </div>
+            <span className="text-[#a8a8a8]">Engine: <span className="text-white font-semibold group-hover:text-[#00d4ff] transition-colors">Custom CNNTransformerSR (4×)</span></span>
+            <ArrowRight size={12} className="text-[#666666] group-hover:text-white transition-colors" />
+          </button>
 
           <button
-            onClick={scrollToWorkbench}
-            className="h-9 px-4 rounded-md bg-[#0007cd] hover:bg-[#0005a3] text-white text-xs font-medium tracking-wide transition-colors flex items-center gap-1.5"
+            onClick={() => { setActiveView("studio"); scrollToWorkbench(); }}
+            className="h-9 px-4 rounded-md bg-[#0007cd] hover:bg-[#0005a3] text-white text-xs font-medium tracking-wide transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles size={14} />
             Launch Studio
@@ -195,8 +231,14 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
         </div>
       </header>
 
-      {/* Hero Band with Blue Spotlight Glow Backdrop (hero-band) */}
-      <section className="relative overflow-hidden pt-20 pb-24 px-6 border-b border-[#222222] composio-spotlight">
+      {activeView === "architecture" ? (
+        <main className="flex-1 bg-[#0f0f0f]">
+          <ModelArchitectureWorkflow onBackToStudio={() => { setActiveView("studio"); scrollToWorkbench(); }} />
+        </main>
+      ) : (
+        <main className="flex-1">
+          {/* Hero Band with Blue Spotlight Glow Backdrop (hero-band) */}
+          <section className="relative overflow-hidden pt-20 pb-24 px-6 border-b border-[#222222] composio-spotlight">
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center relative z-10">
           
           {/* Badge Pill (badge-pill) */}
@@ -216,103 +258,30 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
           </p>
 
           {/* CTAs (button-primary & button-secondary-dark: 8px rounded-md) */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 mb-16">
+          <div className="flex flex-wrap items-center justify-center gap-3.5">
             <button
-              onClick={scrollToWorkbench}
-              className="h-10 px-5 rounded-md bg-[#0007cd] hover:bg-[#0005a3] text-white text-sm font-medium tracking-normal transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(0,7,205,0.4)]"
+              onClick={() => { setActiveView("studio"); scrollToWorkbench(); }}
+              className="h-10 px-5 rounded-md bg-[#0007cd] hover:bg-[#0005a3] text-white text-sm font-medium tracking-normal transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(0,7,205,0.4)] cursor-pointer"
             >
               <UploadCloud size={16} />
               Ingest Satellite Tile
             </button>
 
             <button
-              onClick={() => handleLoadPreset("punjab")}
-              className="h-10 px-5 rounded-md bg-[#222222] hover:bg-[#2a2a2a] text-white border border-[#333333] text-sm font-medium tracking-normal transition-all flex items-center gap-2"
+              onClick={() => { setActiveView("studio"); handleLoadPreset("punjab"); }}
+              className="h-10 px-5 rounded-md bg-[#222222] hover:bg-[#2a2a2a] text-white border border-[#333333] text-sm font-medium tracking-normal transition-all flex items-center gap-2 cursor-pointer"
             >
               <Activity size={16} className="text-[#33d17a]" />
               Run Instant Jury Demo
             </button>
-          </div>
 
-          {/* Brand Signature: 2x2 Terminal Mockup Grid (terminal-mockup-grid) */}
-          <div id="terminal" className="w-full max-w-4xl rounded-2xl bg-[#000000] border border-[#222222] p-5 sm:p-7 relative shadow-2xl text-left">
-            {/* Spotlight Glow behind terminal */}
-            <div className="absolute inset-0 composio-spotlight-subtle rounded-2xl pointer-events-none"></div>
-
-            {/* Terminal Top Bar */}
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#222222]">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-[#333333]"></div>
-                <div className="w-3 h-3 rounded-full bg-[#2a2a2a]"></div>
-                <div className="w-3 h-3 rounded-full bg-[#222222]"></div>
-                <span className="ml-2 font-mono-code text-xs text-[#888888]">sen2sr-pipeline // node-01.epsg32643</span>
-              </div>
-              <span className="font-mono-code text-[11px] text-[#00d4ff] flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-ping"></span>
-                ACTIVE INFERENCE CLUSTER
-              </span>
-            </div>
-
-            {/* 2x2 Terminal Panes */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-              
-              {/* Pane 1: Ingest & Geometry */}
-              <div className="bg-[#181818] border border-[#222222] rounded-xl p-4 font-mono-code text-xs">
-                <div className="flex items-center justify-between text-[#888888] pb-2 mb-2 border-b border-[#222222]">
-                  <span className="text-white flex items-center gap-1.5"><Terminal size={12} className="text-[#0007cd]" /> ingest.py</span>
-                  <span className="text-[10px] text-[#33d17a]">PASS</span>
-                </div>
-                <div className="space-y-1 text-[#a8a8a8]">
-                  <p className="text-white">$ sen2sr ingest --bands 10 --sensor S2A</p>
-                  <p className="text-[#666666]">» Tensor: [10, 64, 64] float32</p>
-                  <p className="text-[#666666]">» Radiance: 10000 DN → [0, 1] refl</p>
-                  <p className="text-[#33d17a]">✓ Affine Transform & EPSG:32643 OK</p>
-                </div>
-              </div>
-
-              {/* Pane 2: Neural Super-Resolution */}
-              <div className="bg-[#181818] border border-[#222222] rounded-xl p-4 font-mono-code text-xs">
-                <div className="flex items-center justify-between text-[#888888] pb-2 mb-2 border-b border-[#222222]">
-                  <span className="text-white flex items-center gap-1.5"><Cpu size={12} className="text-[#00d4ff]" /> super_resolve.py</span>
-                  <span className="text-[10px] text-[#00d4ff]">2.5m GSD</span>
-                </div>
-                <div className="space-y-1 text-[#a8a8a8]">
-                  <p className="text-white">$ model.forward(X_in, factor=4.0)</p>
-                  <p className="text-[#666666]">» Output Tensor: [10, 256, 256]</p>
-                  <p className="text-[#666666]">» PSNR: 39.42 dB | SSIM: 0.941</p>
-                  <p className="text-[#00d4ff]">✓ Residual Channel Attention Conv</p>
-                </div>
-              </div>
-
-              {/* Pane 3: Spectral Indices & Analytics */}
-              <div className="bg-[#181818] border border-[#222222] rounded-xl p-4 font-mono-code text-xs">
-                <div className="flex items-center justify-between text-[#888888] pb-2 mb-2 border-b border-[#222222]">
-                  <span className="text-white flex items-center gap-1.5"><Layers size={12} className="text-[#33d17a]" /> gis_analytics.py</span>
-                  <span className="text-[10px] text-[#33d17a]">CALCULATED</span>
-                </div>
-                <div className="space-y-1 text-[#a8a8a8]">
-                  <p className="text-white">$ compute_indices(B04, B03, B08)</p>
-                  <p className="text-[#666666]">» NDVI: (NIR - Red) / (NIR + Red)</p>
-                  <p className="text-[#666666]">» NDWI: (Green - NIR) / (Green + NIR)</p>
-                  <p className="text-[#33d17a]">✓ Epistemic Uncertainty Mapped</p>
-                </div>
-              </div>
-
-              {/* Pane 4: GIS Export */}
-              <div className="bg-[#181818] border border-[#222222] rounded-xl p-4 font-mono-code text-xs">
-                <div className="flex items-center justify-between text-[#888888] pb-2 mb-2 border-b border-[#222222]">
-                  <span className="text-white flex items-center gap-1.5"><Download size={12} className="text-[#7b3aed]" /> raster_export.rs</span>
-                  <span className="text-[10px] text-[#7b3aed]">READY</span>
-                </div>
-                <div className="space-y-1 text-[#a8a8a8]">
-                  <p className="text-white">$ rasterio.write(driver="GTiff")</p>
-                  <p className="text-[#666666]">» tile_SR_2p5m.tif (32-bit Float)</p>
-                  <p className="text-[#666666]">» tile_NDVI.tif & tile_NDWI.tif</p>
-                  <p className="text-[#7b3aed]">✓ QGIS & ArcGIS Interoperable</p>
-                </div>
-              </div>
-
-            </div>
+            <button
+              onClick={() => { setActiveView("architecture"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="h-10 px-5 rounded-md bg-[#181818] hover:bg-[#222222] text-white border border-[#333333] hover:border-[#0007cd] text-sm font-medium tracking-normal transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <Cpu size={16} className="text-[#00d4ff]" />
+              Explore Model Architecture & Workflow
+            </button>
           </div>
 
         </div>
@@ -422,7 +391,7 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
                 {loading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Executing SEN2SR 4× Reconstruction...</span>
+                    <span>Executing Custom 4× Neural Reconstruction...</span>
                   </>
                 ) : (
                   <>
@@ -662,7 +631,7 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
                           beforeImage={getUrl(result.previews.input_low_res_png)}
                           afterImage={getUrl(result.previews.enhanced_image_png)}
                           beforeLabel={result.tag ? `${result.tag} — Input (10m L2A)` : "Input (10m L2A Sentinel-2)"}
-                          afterLabel={result.tag ? `${result.tag} — Enhanced (2.5m)` : "Super-Resolved (2.5m SEN2SR)"}
+                          afterLabel={result.tag ? `${result.tag} — Enhanced (2.5m)` : "Super-Resolved (2.5m Custom SR)"}
                         />
                       ) : (
                         <CompareSlider
@@ -821,7 +790,7 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
               Full 10-Band Multi-Spectral Reconstitution
             </h2>
             <p className="text-sm text-[#888888] mt-2 max-w-xl mx-auto">
-              Our SEN2SR architecture supersamples not only RGB visible light, but also crucial near-infrared and shortwave-infrared sensors.
+              Our custom CNN-Transformer architecture supersamples not only RGB visible light, but also crucial near-infrared and shortwave-infrared sensors.
             </p>
           </div>
 
@@ -875,50 +844,9 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
         </div>
       </section>
 
-      {/* Feature Cards 3-Up Grid (feature-card conforming to DESIGN.md) */}
-      <section className="py-20 px-6 border-t border-[#222222] bg-[#0f0f0f]">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-10 text-center">
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#222222] text-[#a8a8a8] border border-[#333333] text-[11px] font-semibold tracking-[0.88px] uppercase mb-2">
-              METHODOLOGY & ARCHITECTURE
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-medium tracking-tight text-white">
-              Engineered for Quantitative Earth Observation
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#181818] border border-[#222222] rounded-2xl p-7">
-              <div className="w-8 h-8 rounded-md bg-[#0007cd] text-white flex items-center justify-center mb-5 font-mono-code text-xs font-semibold">
-                01
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Sub-Pixel Residual Attention</h3>
-              <p className="text-sm text-[#888888] leading-relaxed">
-                Deep Residual Channel Attention Networks (RCAN) learn inter-dependencies across spectral channels, recovering fine micro-parcel edges lost in standard 10m bilinear interpolation.
-              </p>
-            </div>
-
-            <div className="bg-[#181818] border border-[#222222] rounded-2xl p-7">
-              <div className="w-8 h-8 rounded-md bg-[#0007cd] text-white flex items-center justify-center mb-5 font-mono-code text-xs font-semibold">
-                02
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Radiometric Conservation</h3>
-              <p className="text-sm text-[#888888] leading-relaxed">
-                Enforces physical energy conservation constraints. Spectral reflectance across each 4×4 super-resolved grid sums back to the original low-resolution cell, preventing artificial hallucination.
-              </p>
-            </div>
-
-            <div className="bg-[#181818] border border-[#222222] rounded-2xl p-7">
-              <div className="w-8 h-8 rounded-md bg-[#0007cd] text-white flex items-center justify-center mb-5 font-mono-code text-xs font-semibold">
-                03
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Native GDAL / GeoTIFF Pipeline</h3>
-              <p className="text-sm text-[#888888] leading-relaxed">
-                Direct integration with Rasterio computes sub-pixel affine transformation matrices. Output GeoTIFFs maintain true geodetic coordinates ready for immediate ingestion into GIS workflows.
-              </p>
-            </div>
-          </div>
-        </div>
+      {/* Custom Architecture & Pipeline Workflow Section */}
+      <section id="custom-architecture" className="border-t border-[#222222] bg-[#0f0f0f]">
+        <ModelArchitectureWorkflow onBackToStudio={() => { setActiveView("studio"); scrollToWorkbench(); }} />
       </section>
 
       {/* Pre-Footer Spotlight CTA Band (cta-band-spotlight conforming to DESIGN.md) */}
@@ -943,6 +871,8 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
           </button>
         </div>
       </section>
+        </main>
+      )}
 
       {/* Footer (footer-dark: canvas #0f0f0f, body text #888888, 5-column layout) */}
       <footer className="border-t border-[#222222] bg-[#0f0f0f] py-16 px-8 text-xs text-[#888888]">
@@ -960,17 +890,45 @@ PRESET_DATA.sundarbans = PRESET_DATA.preset3;
             </p>
             <div className="flex items-center gap-2 text-[11px] text-[#666666]">
               <span className="w-2 h-2 rounded-full bg-[#33d17a]"></span>
-              API Port: 8000 • FastAPI + PyTorch RCAN
+              API Port: 8000 • FastAPI + Custom CNNTransformerSR
             </div>
           </div>
 
           <div>
-            <h5 className="font-semibold text-white uppercase tracking-wider text-[11px] mb-3">Architecture</h5>
+            <h5 className="font-semibold text-white uppercase tracking-wider text-[11px] mb-3">Custom Architecture</h5>
             <ul className="space-y-2">
-              <li><span className="hover:text-white transition-colors cursor-pointer">RCAN 4× Backbone</span></li>
-              <li><span className="hover:text-white transition-colors cursor-pointer">SEN2VENuS Pretraining</span></li>
-              <li><span className="hover:text-white transition-colors cursor-pointer">Radiometric Loss</span></li>
-              <li><span className="hover:text-white transition-colors cursor-pointer">Monte-Carlo Uncertainty</span></li>
+              <li>
+                <button
+                  onClick={() => { setActiveView("architecture"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="hover:text-white transition-colors text-left cursor-pointer"
+                >
+                  CNNTransformerSR Backbone
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => { setActiveView("architecture"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="hover:text-white transition-colors text-left cursor-pointer"
+                >
+                  Composite SpectralLoss
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => { setActiveView("architecture"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="hover:text-white transition-colors text-left cursor-pointer"
+                >
+                  RaGAN + TTUR Fine-Tuning
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => { setActiveView("architecture"); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  className="hover:text-[#33d17a] transition-colors text-left font-mono-code text-[11px] cursor-pointer"
+                >
+                  model.py (Workspace Root)
+                </button>
+              </li>
             </ul>
           </div>
 
