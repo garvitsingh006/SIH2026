@@ -47,9 +47,9 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
-from backend.model import BAND_INDEX, load_model, run_inference
-from backend.gis_analytics import compute_confidence_map, run_analytics_pipeline
-from backend.image_utils import save_index_preview, save_rgb_preview
+from model import BAND_INDEX, load_model, run_inference
+from gis_analytics import compute_confidence_map, run_analytics_pipeline
+from image_utils import save_index_preview, save_rgb_preview
 
 OUTPUT_ROOT = "outputs"
 os.makedirs(OUTPUT_ROOT, exist_ok=True)
